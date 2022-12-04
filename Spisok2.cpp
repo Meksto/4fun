@@ -13,7 +13,6 @@ public:
 	}
 	~List2()
 	{
-		clear();
 	}
 
 	int getSize() { return size; }
