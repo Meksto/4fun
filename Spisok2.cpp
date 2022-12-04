@@ -18,10 +18,13 @@ public:
 
 	int getSize() { return size; }
 
+	T& operator[](const int index);
 	void pop_front();
+	void pop_back();
 	void clear();
 
 	void push_back(T data);
+	void push_front(T data);
 	void getList();
 
 private:
@@ -54,6 +57,33 @@ private:
 
 
 template<typename T>
+T& List2<T>::operator[](const int index)
+{
+	if (index > size-1) { throw exception("You are out of range"); }
+
+	if (index > size/2)
+	{
+		Node<T>* elem = tail;
+		int counter = size-1;
+		while (counter != index)
+		{
+			elem = elem->pprev;
+			counter--;
+		}
+		return elem->data;
+	}
+	Node<T>* elem = head;
+	int counter = 0;
+	while (counter != index)
+	{
+		elem = elem->pnext;
+		counter++;
+	}
+	return elem->data;
+	// TODO: вставьте здесь оператор return
+}
+
+template<typename T>
 void List2<T>::pop_front()
 {
 	if (head->pnext != nullptr)
@@ -69,6 +99,26 @@ void List2<T>::pop_front()
 	head = head->pnext;
 	delete toDel;
 	size--; 
+	
+}
+
+template<typename T>
+void List2<T>::pop_back()
+{
+	if (head != tail)
+	{
+		Node<T>* toDel = tail;
+		tail = tail->pprev;
+		tail->pnext = nullptr;
+		delete toDel;
+		size--;
+		return;
+	}
+	delete tail;
+	head = tail = nullptr;
+	size--;
+	return;
+
 	
 }
 
@@ -105,6 +155,23 @@ void List2<T>::push_back(T data)
 }
 
 template<typename T>
+void List2<T>::push_front(T data)
+{
+	if (head == nullptr)
+	{
+		tail = head = new Node<T>(data);
+		size++;
+		return;
+		
+	}
+	Node<T> *obj = head;
+	head = new Node<T>(data, head);
+	obj->pprev = head;
+	size++;
+	
+}
+
+template<typename T>
 void List2<T>::getList()
 {
 	cout << "Elenets in the List: " << getSize() << endl;
@@ -130,12 +197,22 @@ int main()
 {
 	List2<int> lst;
 	lst.push_back(50);
-	lst.push_back(20);
-	lst.push_back(10);
+	lst.push_back(40);
+	lst.push_back(30);
 	lst.getList();
-	lst.pop_front();
-	lst.getList();
-	lst.clear();
-	lst.getList();
+
+
+	try
+	{
+		cout << "Element is - " << lst[2] << endl;
+	}
+	catch (const std::exception& ex)
+	{
+		cout << ex.what() << endl;
+	}
+	
+
+
+
 }
 
