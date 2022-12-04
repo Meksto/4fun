@@ -10,6 +10,7 @@ public:
 	{
 		size = 0;
 		head = nullptr;
+		tail = nullptr;
 	}
 	~List2()
 	{
@@ -22,7 +23,8 @@ public:
 	void pop_front();
 	void pop_back();
 	void clear();
-
+	void insert(T data, const int index);
+	void removeAt(const int index);
 	void push_back(T data);
 	void push_front(T data);
 	void getList();
@@ -132,6 +134,93 @@ void List2<T>::clear()
 }
 
 template<typename T>
+void List2<T>::insert(T data, const int index)
+{
+	if (index > size - 1) { throw exception("You are out of range"); }
+	if (index == 0) { push_front(data); return; }
+	if (index == size - 1) { push_back(data); return; }
+
+	if (index > size / 2)
+	{
+		int counter = size-1;
+		Node<T>* prevElem = tail;
+		Node<T>* nextElem = tail;
+		while (counter != index-1) // находим предыдущий элемент от заданного
+		{
+			prevElem = prevElem->pprev;
+			counter--;
+		}
+		nextElem = prevElem->pnext;
+		prevElem->pnext = new Node<T>(data, prevElem->pnext, nextElem->pprev);
+		nextElem->pprev = prevElem->pnext;
+
+		size++;
+		return;
+
+	}
+	Node<T>* prevElem = head;
+	Node<T>* nextElem = head;
+	int counter = 0;
+	while (counter != index-1)
+	{
+		prevElem = prevElem->pnext;
+		counter++;
+	}
+	nextElem = prevElem->pnext;
+	prevElem->pnext = new Node<T>(data, prevElem->pnext, nextElem->pprev);
+	nextElem->pprev = prevElem->pnext;
+
+	size++;
+	return;
+
+}
+
+template<typename T>
+void List2<T>::removeAt(const int index)
+{
+	if (index > size - 1) { throw exception("You are out of range"); }
+	if (index == 0) { pop_front(); return; }
+	if (index == size - 1) { pop_back(); return; }
+
+	if (index > size/2)
+	{
+		int counter = size - 1;
+		Node<T>* prevElem = tail;
+		Node<T>* nextElem = tail;
+		Node<T>* toDel = nullptr;
+		while (counter != index - 1) // находим предыдущий элемент от заданного
+		{
+			prevElem = prevElem->pprev;
+			counter--;
+		}
+		toDel = prevElem->pnext;
+		nextElem = toDel->pnext;
+		prevElem->pnext = nextElem;
+		nextElem->pprev = prevElem;
+		delete toDel;
+		size--;
+		return;
+
+	}
+	Node<T>* prevElem = head;
+	Node<T>* nextElem = head;
+	Node<T>* toDel = nullptr;
+	int counter = 0;
+	while (counter != index - 1)
+	{
+		prevElem = prevElem->pnext;
+		counter++;
+	}
+	toDel = prevElem->pnext;
+	nextElem = toDel->pnext;
+	prevElem->pnext = nextElem;
+	nextElem->pprev = prevElem;
+	delete toDel;
+	size--;
+	return;
+}
+
+template<typename T>
 void List2<T>::push_back(T data)
 {
 	if (head == nullptr)
@@ -196,20 +285,23 @@ void List2<T>::getList()
 int main()
 {
 	List2<int> lst;
-	lst.push_back(50);
-	lst.push_back(40);
-	lst.push_back(30);
+	lst.push_back(11);
+	lst.push_back(12);
+	lst.push_back(13);
+	lst.push_back(14);
+	lst.push_back(15);
+	lst.push_back(16);
+	lst.push_back(17);
+	lst.push_back(18);
+
 	lst.getList();
 
-
-	try
-	{
-		cout << "Element is - " << lst[2] << endl;
-	}
-	catch (const std::exception& ex)
-	{
-		cout << ex.what() << endl;
-	}
+	lst.removeAt(1);
+	lst.getList();
+	lst.removeAt(5);
+	lst.getList();
+	lst.removeAt(1);
+	lst.getList();
 	
 
 
